@@ -8,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
 import io.rsocket.RSocketFactory;
-import io.rsocket.transport.netty.client.TcpClientTransport;
+import io.rsocket.transport.netty.client.WebsocketClientTransport;
 import io.rsocket.util.DefaultPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class BattleRSocketClient {
 
 		RSocket rSocket = RSocketFactory.connect() //
 				.keepAliveTickPeriod(Duration.ofSeconds(1)) //
-				.transport(TcpClientTransport.create(port)) //
+				.transport(WebsocketClientTransport.create(port)) //
 				.start() //
 				.block();
 
