@@ -24,9 +24,9 @@ import static org.springframework.http.MediaType.TEXT_EVENT_STREAM;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
-public class BattleRRocketServerHttpProxy {
+public class BattleRSocketServerHttpProxy {
 
-	private static Logger log = LoggerFactory.getLogger(BattleRRocketServerHttpProxy.class);
+	private static Logger log = LoggerFactory.getLogger(BattleRSocketServerHttpProxy.class);
 
 	public static void main(String[] args) throws Exception {
 		long begin = System.currentTimeMillis();
@@ -36,11 +36,11 @@ public class BattleRRocketServerHttpProxy {
 		HttpServer httpServer = HttpServer.create().host("0.0.0.0").port(port);
 		httpServer.route(routes -> {
 			HttpHandler httpHandler = RouterFunctions.toHttpHandler(
-					BattleRRocketServerHttpProxy.routes(), HandlerStrategies.builder().build());
+					BattleRSocketServerHttpProxy.routes(), HandlerStrategies.builder().build());
 			routes.route(x -> true, new ReactorHttpHandlerAdapter(httpHandler));
 		}).bindUntilJavaShutdown(Duration.ofSeconds(3), disposableServer -> {
 			long elapsed = System.currentTimeMillis() - begin;
-			LoggerFactory.getLogger(BattleRRocketServerHttpProxy.class).info("Started in {} seconds",
+			LoggerFactory.getLogger(BattleRSocketServerHttpProxy.class).info("Started in {} seconds",
 					elapsed / 1000.0);
 		});
 	}

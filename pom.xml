@@ -18,7 +18,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <rsocket.version>0.11.8</rsocket.version>
         <java.version>1.8</java.version>
-        <start-class>com.example.BattleHttpProxy</start-class>
+        <start-class>com.example.BattleRSocketServer</start-class>
     </properties>
 
 

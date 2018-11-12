@@ -1,11 +1,9 @@
 package com.example;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,7 +40,6 @@ public class BattleCoordinator {
 		AtomicBoolean winner = new AtomicBoolean(false);
 		AtomicInteger n = new AtomicInteger();
 		return rpcClient.rpc(Mono.just(request)) //
-				//timeout(Duration.ofSeconds(1)) //
 				.doOnSuccess(d -> {
 					Object xWin = d.getProperties().getHeaders().get("X-Win");
 					boolean win = Boolean.parseBoolean(Objects.toString(xWin, ""));
@@ -56,17 +53,9 @@ public class BattleCoordinator {
 						log.info("{} {} wins in a row!", user.getUserName(), n);
 					}
 				}) //
-				.doOnCancel(() -> log.info("{} canceled!", user.getUserName()))
+				.doOnCancel(() -> log.info("{} canceled!", user.getUserName())) //
+				.doOnError(e -> log.error(user.getUserName() + " error!", e)) //
 				.flatMapIterable(d -> Arrays.asList(new String(d.getBody()).split(","))) //
-				.repeat(winner::get) //
-				.retry(e -> {
-					//log.info("{} retry!", user.getUserName());
-					return (e instanceof TimeoutException);
-				}) //
-				.doOnError(e -> {
-					if (!(e instanceof TimeoutException)) {
-						log.error(user.getUserName() + " error!", e);
-					}
-				});
+				.repeat(winner::get);
 	}
 }
