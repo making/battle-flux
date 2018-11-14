@@ -96,7 +96,6 @@ class App extends Component {
                         const battleLogs = this.state.battleLogs;
                         const group = value.data.match(pattern);
                         if (group) {
-                            console.log(group[1], group[2]);
                             if (group[1] === this.state.userName) {
                                 this.setState({userPower: Number(group[2])});
                             } else {
@@ -165,7 +164,7 @@ class App extends Component {
                                         <Input id="userName" name="userName" required=""
                                                value={this.state.userName}
                                                disabled={this.state.inFlight}
-                                               onChange={(e) => this.setState({userName: e.target.value})}/>
+                                               onChange={(e) => this.setState({userName: e.target.value.trim()})}/>
                                     </div>
                                     <div className="help-row type-dark-5">must not be empty.</div>
                                 </div>
@@ -180,10 +179,10 @@ class App extends Component {
                                     </div>
                                     <div className="field-row">
                                         <Input id="offensivePower" name="offensivePower" type="number"
-                                               required="" min={1} max={199}
+                                               required="" pattern="\d*"
                                                value={this.state.offensivePower}
                                                disabled={this.state.inFlight}
-                                               onChange={(e) => this.setState({offensivePower: Number(e.target.value)})}/>
+                                               onChange={(e) => this.setState({offensivePower: Math.max(0, Math.min(Number(e.target.value), 200))})}/>
                                     </div>
                                     <div className="help-row type-dark-5">Offense + Defense must be 200.</div>
                                 </div>
@@ -212,10 +211,10 @@ class App extends Component {
                                         <div className="col col-fixed field-row">
 
                                             request(<Input type="number"
-                                                           min={1} max={256}
+                                                           pattern="\d*"
                                                            style={{width: "1em"}}
                                                            value={this.state.maxInFlight}
-                                                           onChange={(e) => this.setState({maxInFlight: Number(e.target.value)})}/>)
+                                                           onChange={(e) => this.setState({maxInFlight: Math.max(0, Math.min(Number(e.target.value), 256))})}/>)
                                         </div>
                                     </div>
                                     <div className="grid">
