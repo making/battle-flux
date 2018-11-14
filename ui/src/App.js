@@ -96,10 +96,12 @@ class App extends Component {
                         if (group) {
                             console.log(group[1], group[2]);
                             if (group[1] === this.state.userName) {
-                                this.state.userPower = Number(group[2]);
+                                this.setState({userPower: Number(group[2])});
                             } else {
-                                this.state.enemyName = group[1];
-                                this.state.enemyPower = Number(group[2]);
+                                this.setState({
+                                    enemyName: group[1],
+                                    enemyPower: Number(group[2])
+                                });
                             }
                         }
                         battleLogs.unshift(value);
