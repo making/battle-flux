@@ -45,13 +45,15 @@ class App extends Component {
             maxInFlight: 5,
             inFlight: false
         };
+        const url = window.hostname === 'localhost' ? 'ws://locaalhost:8800' : 'wss://' + window.location.host.replace('-ui', '');
         this.client = new RSocketClient({
             setup: {
                 dataMimeType: 'text/plain',
                 metadataMimeType: 'text/plain'
             },
-            transport: new RSocketWebSocketClient({url: 'ws://localhost:8800'}),
-        });
+            transport: new RSocketWebSocketClient({url: url}),
+        })
+        ;
         this.rsocket = null;
     }
 

@@ -1,0 +1,5 @@
+applications:
+- name: battle-flux-ui
+  buildpack: staticfile_buildpack
+  memory: 32m
+  path: build

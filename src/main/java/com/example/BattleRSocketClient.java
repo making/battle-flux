@@ -20,7 +20,7 @@ public class BattleRSocketClient {
 
 	public static void main(String[] args) throws Exception {
 
-		int port = Optional.ofNullable(System.getenv("RSOCKET_PORT")) //
+		int port = Optional.ofNullable(System.getenv("PORT")) //
 				.map(Integer::parseInt) //
 				.orElse(8800);
 

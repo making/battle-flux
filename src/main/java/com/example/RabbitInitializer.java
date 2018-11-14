@@ -1,5 +1,11 @@
 package com.example;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.ConnectionFactory;
 import reactor.core.scheduler.Schedulers;
 import reactor.rabbitmq.ReactorRabbitMq;
@@ -18,7 +24,23 @@ public class RabbitInitializer {
 
 	public RabbitInitializer() {
 		this.connectionFactory = new ConnectionFactory();
-		connectionFactory.useNio();
+		try {
+			String uri = StreamSupport
+				.stream(new ObjectMapper().readValue(
+					Objects.toString(System.getenv("VCAP_SERVICES"), "{}"),
+					JsonNode.class).spliterator(), false)
+				.flatMap(n -> StreamSupport.stream(n.spliterator(), false))
+				.filter(n -> StreamSupport.stream(n.get("tags").spliterator(), false)
+					.anyMatch(x -> "rabbitmq".endsWith(x.asText())))
+				.findAny().map(n -> n.get("credentials").get("uri").asText())
+				.orElseGet(() -> Optional.ofNullable(System.getenv("RABBIT_URI"))
+					.orElse("amqp://localhost"));
+			this.connectionFactory.setUri(uri);
+		}
+		catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+		this.connectionFactory.useNio();
 	}
 
 	public Receiver receiver() {

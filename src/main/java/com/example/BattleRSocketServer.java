@@ -21,7 +21,7 @@ public class BattleRSocketServer {
 	private static final Logger log = LoggerFactory.getLogger(BattleRpcServer.class);
 
 	public static void main(String[] args) {
-		int port = Optional.ofNullable(System.getenv("RSOCKET_PORT")) //
+		int port = Optional.ofNullable(System.getenv("PORT")) //
 				.map(Integer::parseInt) //
 				.orElse(8800);
 
