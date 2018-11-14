@@ -107,6 +107,10 @@ public class User {
 		return this.winner;
 	}
 
+	public boolean danger() {
+		return this.power > 0 && this.power < 30;
+	}
+
 	int criticalDamage(User defenser) {
 		return Math.max((int) (30
 				+ (this.getOffensivePower() * 1.4 - defenser.getDefensivePower()) * 0.8

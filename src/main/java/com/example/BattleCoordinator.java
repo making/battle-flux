@@ -1,7 +1,11 @@
 package com.example;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,14 +52,21 @@ public class BattleCoordinator {
 						n.incrementAndGet();
 					}
 				}) //
-				.doOnNext(s -> {
-					if (winner.get() && n.get() > 1) {
-						log.info("{} {} wins in a row!", user.getUserName(), n);
-					}
-				}) //
 				.doOnCancel(() -> log.info("{} canceled!", user.getUserName())) //
 				.doOnError(e -> log.error(user.getUserName() + " error!", e)) //
 				.flatMapIterable(d -> Arrays.asList(new String(d.getBody()).split(","))) //
-				.repeat(winner::get);
+				.concatWith(Flux.defer(() -> {
+					List<String> messages = new ArrayList<>();
+					if (winner.get()) {
+						messages.add("😉You win.");
+						if (n.get() > 1) {
+							messages.add("🎉" + n + " wins in a row!");
+						}
+					}
+					else {
+						messages.add("😇You lose.");
+					}
+					return Flux.fromIterable(messages);
+				})).repeat(winner::get);
 	}
 }

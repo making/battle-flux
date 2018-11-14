@@ -28,25 +28,25 @@ public class BattleFlux {
 			sink.onRequest(n -> {
 				for (int i = 0; i < Math.min(n / 5 + 1, 500); i++) {
 					currentLoop.increment();
-					sink.next(String.format("Turn %d", currentLoop.intValue()));
+					sink.next(String.format("⚔Turn %d", currentLoop.intValue()));
 					Tuple2<Integer, Boolean> tpl1 = this.user1.attack(this.user2, random);
 					Tuple2<Integer, Boolean> tpl2 = this.user2.attack(this.user1, random);
 
-					sink.next(String.format("%s%s did %d damage to %s",
-							tpl1.getT2() ? "Critical Hit! " : "",
-							this.user1.getUserName(), tpl1.getT1(),
-							this.user2.getUserName()));
-					sink.next(String.format("%s%s did %d damage to %s",
-							tpl2.getT2() ? "Critical Hit! " : "",
-							this.user2.getUserName(), tpl2.getT1(),
-							this.user1.getUserName()));
-					sink.next(String.format("%s's remaining power is %d.",
-							this.user1.getUserName(), this.user1.currentPower()));
-					sink.next(String.format("%s's remaining power is %d.",
-							this.user2.getUserName(), this.user2.currentPower()));
+					sink.next(String.format("%s:\tdid %d damage to %s%s",
+							this.user1.getUserName(),
+							tpl1.getT1(), this.user2.getUserName(), tpl1.getT2() ? " 💥" : ""));
+					sink.next(String.format("%s:\tdid %d damage to %s%s",
+							this.user2.getUserName(),
+							tpl2.getT1(), this.user1.getUserName(), tpl2.getT2() ? " 💥" : ""));
+					sink.next(String.format("%s:\tremaining power is %d%s",
+							this.user1.getUserName(), this.user1.currentPower(),
+							this.user1.danger() ? " 🚨" : ""));
+					sink.next(String.format("%s:\tremaining power is %d%s",
+							this.user2.getUserName(), this.user2.currentPower(),
+							this.user2.danger() ? " 🚨" : ""));
 
 					if (!this.user1.alive() && !this.user2.alive()) {
-						sink.next("Draw. Restart.");
+						sink.next("❗️Draw. Restart.");
 						this.init();
 						continue;
 					}
@@ -61,16 +61,11 @@ public class BattleFlux {
 					}
 				}
 
-				if (this.user1.winner()) {
-					sink.next(this.user1.getUserName() + " won!");
-					sink.complete();
-				}
-				else if (this.user2.winner()) {
-					sink.next(this.user2.getUserName() + " won!");
+				if (this.user1.winner() || this.user2.winner()) {
 					sink.complete();
 				}
 				else if (currentLoop.intValue() >= maxLoop) {
-					sink.next("Draw.");
+					sink.next("❗Draw.");
 					sink.complete();
 				}
 			});
